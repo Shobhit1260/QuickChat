@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import socket from './socket.js';
 import Media from './Media.jsx';
 
+import BASE from '../../api.js'
+
 function Chat() {
   const userSelected = useSelector((state) => state?.userSelected?.value);
   const me = useSelector((state) => state?.me?.value);
@@ -79,8 +81,8 @@ function Chat() {
     const fetchHistory = async () => {
       try {
         const res = await fetch(
-          isGroup?`http://localhost:8000/v1/fetchgrouphistory/${groupId}`:
-          `http://localhost:8000/v1/fetchchathistory/${me._id}/${userSelected._id}`,
+          isGroup?`${BASE}/v1/fetchgrouphistory/${groupId}`:
+          `${BASE}/v1/fetchchathistory/${me._id}/${userSelected._id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
             credentials: 'include'
@@ -187,7 +189,7 @@ function Chat() {
                 className="bg-transparent outline-none w-full"
               />
              <Media me={me} userSelected={userSelected} isGroup={isGroup} chatHistory={chatHistory}/>
-              {/* <img src={gallery_icon} alt="gallery"/> */}
+              
               
             </div>
             <button type="submit">

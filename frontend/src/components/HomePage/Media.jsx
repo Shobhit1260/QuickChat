@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import gallery_icon from "../../chat-app-assests/gallery_icon.svg";
 import socket from "./socket.js";
+import BASE from '../../api.js'
 function Media({ me, userSelected, isGroup,chatHistory }) {
   const [preview, setPreview] = useState(false);
   const [file, setFile] = useState(null);
@@ -23,7 +24,7 @@ function Media({ me, userSelected, isGroup,chatHistory }) {
     formData.append("media", file);
     
 
-    const res= await fetch("http://localhost:8000/v1/upload", {
+    const res= await fetch(`${BASE}/v1/upload`, {
       method: "POST",
       headers: {
         Authorization:`Bearer ${localStorage.getItem("token")}`,

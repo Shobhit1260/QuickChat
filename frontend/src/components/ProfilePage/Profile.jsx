@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setMe } from "../../Redux/meSlice";
+import BASE from '../../api.js' 
 
 function Profile(){
   const { user, isAuthenticated, isLoading, logout, getAccessTokenSilently } = useAuth0();
@@ -15,7 +16,7 @@ function Profile(){
       const token = await getAccessTokenSilently();
   
       localStorage.setItem("token", token);
-      const res = await fetch('http://localhost:8000/v1/storeuser', {
+      const res = await fetch(`${BASE}/v1/storeuser`, {
         method: "POST",
         headers: {
           'content-type': 'application/json',

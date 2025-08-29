@@ -6,6 +6,7 @@ import { setSelectedUser, clearSelectedUser } from '../../Redux/UserSlice.js'
 import { useSelector, useDispatch } from 'react-redux'
 import { useAuth0 } from '@auth0/auth0-react';
 import { toast } from 'react-toastify';
+import BASE from  '../../api.js'
 
 function LeftSideBar({ leftSideBarData}) {
   const dispatch = useDispatch();
@@ -70,7 +71,7 @@ function LeftSideBar({ leftSideBarData}) {
     setIsCreatingGroup(true);
 
     try {
-      const res = await fetch("http://localhost:8000/v1/creategroup", {
+      const res = await fetch(`${BASE}/v1/creategroup`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -96,10 +97,10 @@ function LeftSideBar({ leftSideBarData}) {
         
         toast.success(data.message || "Group created successfully");
         
-        // Trigger data refresh in parent component
-        if (onDataUpdate) {
-          onDataUpdate();
-        }
+        // // Trigger data refresh in parent component
+        // if (onDataUpdate) {
+        //   onDataUpdate();
+        // }
       }
     } catch (error) {
       console.error("Error creating group:", error);

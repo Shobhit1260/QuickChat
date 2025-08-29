@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import LeftSideBar from './LeftSideBar'
 import Chat from './Chat'
-
+import BASE from '../../api.js'
 import { useSelector } from 'react-redux'
 import { io } from 'socket.io-client'
 
@@ -16,7 +16,7 @@ function Home() {
    
     useEffect(()=>{
      const fetchLeftSideBarData=async()=>{ 
-      const res1=await fetch("http://localhost:8000/v1/fetchusers",{
+      const res1=await fetch(`${BASE}/v1/fetchusers`,{
        method:"GET",
        headers:{
         "authorization":`Bearer ${savedtoken}`
@@ -29,7 +29,7 @@ function Home() {
       const filteredUsers=users.filter((user)=>user._id !== me?._id);
 
 
-      const res2=await fetch("http://localhost:8000/v1/fetchgroups",{
+      const res2=await fetch(`${BASE}/v1/fetchgroups`,{
        method:"GET",
        headers:{
         "authorization":`Bearer ${savedtoken}`
@@ -45,7 +45,7 @@ function Home() {
 
    useEffect(() => {
      const fetchUsers = async () => {
-       const res = await fetch("http://localhost:8000/v1/fetchusers", {
+       const res = await fetch(`${BASE}/v1/fetchusers`, {
          method: "GET",
          headers: {
            "authorization": `Bearer ${savedtoken}`
