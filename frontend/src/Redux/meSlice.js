@@ -9,9 +9,12 @@ const meSlice= createSlice({
     reducers:{
         setMe:(state,action)=>{
             state.value = action.payload
-        }  
+        },
+        deleteMe:(state)=>{
+            state.value= {}
+        } 
      }
 })
 
-export const { setMe } = meSlice.actions;
+export const { setMe,deleteMe } = meSlice.actions;
 export default meSlice.reducer;

@@ -34,6 +34,7 @@ const s3Client = new S3Client({
 
 exports.uploadMediatoS3=[upload.single("media"),
 async (req, res) => {
+
 try{
    const mediaFile= req.file;
   if (!mediaFile) {
@@ -56,8 +57,7 @@ try{
     s3Key:mediaS3Key,
     url:publicUrl
    })
-   
-   
+  
 }
 catch(error){
   console.error("Error in multer upload:", error);
@@ -68,6 +68,7 @@ catch(error){
 }];
 
 exports.fetchUser=async(req,res)=>{
+  
    try{  
       const users= await User.find({});
       return res.status(200).json({
@@ -82,6 +83,96 @@ exports.fetchUser=async(req,res)=>{
      })
    }
 }
+exports.updateUser = [
+  upload.single("picture"),
+  async (req, res) => {
+    try {
+      const { nickname } = req.body;
+      let pictureUrl;
+
+      if (req.file) {
+        const mediaFile = req.file;
+        const mediaS3Key = `profile/${mediaFile.filename.replace(/\s+/g,"")}`;
+        await s3Client.send(new PutObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: mediaS3Key,
+          Body: fs.createReadStream(mediaFile.path),
+          ContentType: mediaFile.mimetype,
+        }));
+        fs.unlinkSync(mediaFile.path);
+
+     pictureUrl = `https://s3.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_BUCKET_NAME}/${mediaS3Key}`;
+      }
+
+      const updatedUser = await User.findOneAndUpdate(
+        { oauthId: req.user.sub }, 
+        { nickname, ...(pictureUrl && { picture: pictureUrl }) },
+        { new: true, runValidators: true }
+      );
+
+      if (!updatedUser) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Profile updated successfully",
+        user: updatedUser,
+      });
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+  },
+];
+
+exports.updateGroup = [
+  upload.single("picture"),
+  async (req, res) => {
+    try {
+      const { groupId, nickname } = req.body;
+      let pictureUrl;
+
+      if (!groupId) {
+        return res.status(400).json({ success: false, message: "Group ID required" });
+      }
+
+      if (req.file) {
+        const mediaFile = req.file;
+        const mediaS3Key = `groups/${mediaFile.filename}`;
+        await s3Client.send(new PutObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: mediaS3Key,
+          Body: fs.createReadStream(mediaFile.path),
+          ContentType: mediaFile.mimetype,
+        }));
+        fs.unlinkSync(mediaFile.path);
+
+ pictureUrl = `https://s3.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_BUCKET_NAME}/${mediaS3Key}`;      }
+
+      const updatedGroup = await Group.findByIdAndUpdate(
+        groupId,
+        { nickname, ...(pictureUrl && { picture: pictureUrl }) },
+        { new: true, runValidators: true }
+      );
+
+      if (!updatedGroup) {
+        return res.status(404).json({ success: false, message: "Group not found" });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Group updated successfully",
+        group: updatedGroup,
+      });
+    } catch (error) {
+      console.error("Error updating group:", error);
+      res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+  },
+];
+
+
 
 exports.createGroup = async (req, res) => {
   try {
@@ -103,7 +194,7 @@ exports.createGroup = async (req, res) => {
   
 
     const currentUser = await User.findOne({ oauthId: req.user.sub });
-    console.log("currentUser:", currentUser);
+ 
     if (!currentUser) {
       return res.status(404).json({
         success: false,
@@ -265,23 +356,19 @@ exports.getallUsers=async(req,res)=>{
   }
 }
 
-exports.getallGroups=async(req,res)=>{
-  try{
-    const groups=await Group.find({});
+exports.getallGroups = async (req, res) => {
+  try {
+    const groups = await Group.find({});
     res.status(200).json({
-      success:true,
-      groups
-    })
-  }
-  catch(error){
-   console.log("Error fetching all groups:", error.message);
+      success: true,
+      groups,
+    });
+  } catch (error) {
+    console.log("Error fetching all groups:", error.message);
     res.status(500).json({
-      message: "Internal Server Error."
+      message: "Internal Server Error.",
     });
   }
-}
-
-
-
+};
 
 

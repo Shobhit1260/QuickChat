@@ -23,6 +23,8 @@
     "multer": "^2.0.2",
     "nodemon": "^3.1.10",
     "path": "^0.12.7",
+    "react-icons": "^5.5.0",
+    "react-toastify": "^11.0.5",
     "socket.io": "^4.8.1",
     "uuid": "^11.1.0"
   },

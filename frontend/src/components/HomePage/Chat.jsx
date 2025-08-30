@@ -1,99 +1,97 @@
-import { useEffect, useState } from 'react';
-import logo_icon from '../../chat-app-assests/logo_icon.svg';
-import send_button from '../../chat-app-assests/send_button.svg';
-import { useSelector } from 'react-redux';
-import socket from './socket.js';
-import Media from './Media.jsx';
-
-import BASE from '../../api.js'
+import { useEffect, useState } from "react";
+import logo_icon from "../../chat-app-assests/logo_icon.svg";
+import send_button from "../../chat-app-assests/send_button.svg";
+import { GiFastBackwardButton } from "react-icons/gi";
+import { useSelector, useDispatch } from "react-redux";
+import socket from "./socket.js";
+import Media from "./Media.jsx";
+import BASE from "../../api.js";
+import { clearSelectedUser } from "../../Redux/UserSlice.js";
 
 function Chat() {
+  const dispatch = useDispatch();
   const userSelected = useSelector((state) => state?.userSelected?.value);
   const me = useSelector((state) => state?.me?.value);
-  console.log("me",me);
   const token = localStorage.getItem("token");
-  console.log("token",token);
-  const [message, setMessage] = useState('');
+
+  const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const isGroup = Array.isArray(userSelected?.members) && userSelected.members.length > 0;
-  const groupId= isGroup?userSelected?._id:null;
-  console.log("isGroup:", isGroup, "groupId:", groupId);
-  // Connect socket only once on mount
+  const isGroup =
+    Array.isArray(userSelected?.members) && userSelected.members.length > 0;
+  const groupId = isGroup ? userSelected?._id : null;
+
   useEffect(() => {
     socket.connect();
-
-    socket.on("online-users", (online) => {
-      setOnlineUsers(online);
-    });
-
-   
+    socket.on("online-users", (online) => setOnlineUsers(online));
   }, []);
 
-  // Update auth when me changes
   useEffect(() => {
     if (!me?._id) return;
     socket.auth = { userId: me._id };
     socket.emit("setup", me._id);
   }, [me?._id]);
-   // Send message
+
   const sendmsg = (e) => {
-    
     e.preventDefault();
     if (!message.trim() || !me?._id || !userSelected?._id) return;
 
     const newMsg = {
-      _id: Date.now(), 
+      _id: Date.now(),
       sender: me._id,
       receiver: userSelected._id,
       receiverModel: isGroup ? "Group" : "User",
       message,
-      mediaKey:null,
-      isRead: false
+      mediaKey: null,
+      isRead: false,
     };
-   
+
     if (isGroup) {
       socket.emit("sendGroupMessage", {
         toGroupId: userSelected._id,
         message,
-        mediaKey:"",
-        fromUserId: me._id
+        mediaKey: "",
+        fromUserId: me._id,
       });
     } else {
       socket.emit("sendPrivateMessage", {
         toUserId: userSelected._id,
         message,
-        mediaKey:"",
-        fromUserId: me._id
+        mediaKey: "",
+        fromUserId: me._id,
       });
     }
+
     setChatHistory((prev) => [...prev, newMsg]);
     setMessage("");
-   
   };
 
-  // Join correct room when userSelected changes
   useEffect(() => {
-    if (!me?._id || !userSelected?._id) return ;
+    if (!me?._id || !userSelected?._id) return;
 
-    // Fetch chat history
     const fetchHistory = async () => {
       try {
+        setLoading(true);
         const res = await fetch(
-          isGroup?`${BASE}/v1/fetchgrouphistory/${groupId}`:
-          `${BASE}/v1/fetchchathistory/${me._id}/${userSelected._id}`,
+          isGroup
+            ? `${BASE}/v1/fetchgrouphistory/${groupId}`
+            : `${BASE}/v1/fetchchathistory/${me._id}/${userSelected._id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
-            credentials: 'include'
+            credentials: "include",
           }
         );
         const data = await res.json();
-        setChatHistory(data.messages || []);   
+        setChatHistory(data.messages || []);
       } catch (error) {
         console.error("Failed to fetch chat history:", error);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchHistory();
 
     socket.off("receivedPrivateMessage");
@@ -111,11 +109,19 @@ function Chat() {
       socket.off("receivedGroupMessage", handleReceive);
     };
   }, [me?._id, userSelected?._id, token, isGroup]);
-  
+
   const handleChange = (e) => setMessage(e.target.value);
-  
+
   const getColorFromName = (name) => {
-    const colors = ["#FF5733", "#33B5FF", "#28A745", "#FFC107", "#9C27B0", "#FF9800", "#00BCD4"];
+    const colors = [
+      "#FF5733",
+      "#33B5FF",
+      "#28A745",
+      "#FFC107",
+      "#9C27B0",
+      "#FF9800",
+      "#00BCD4",
+    ];
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
       hash = name.charCodeAt(i) + ((hash << 5) - hash);
@@ -126,74 +132,137 @@ function Chat() {
   return (
     <>
       {Object.keys(userSelected).length === 0 ? (
-        <div className="w-1/2 h-full backdrop-blur-lg bg-white/10 flex flex-col gap-4 justify-center items-center rounded-r-xl">
-          <img src={logo_icon} alt="logo" className="w-32" />
-          <div className="text-2xl">Chat anytime, anywhere</div>
+        <div className="w-full h-full backdrop-blur-lg bg-white/10 flex flex-col gap-4 justify-center items-center rounded-r-xl">
+          <img src={logo_icon} alt="logo" className="w-24 sm:w-32" />
+          <div className="text-xl sm:text-2xl text-center px-4">
+            Chat anytime, anywhere
+          </div>
         </div>
       ) : (
-        <div className="z-0 flex flex-col justify-between w-[600px] h-full backdrop-blur bg-white/10 rounded-r-lg">
-          {/* Header */}
-          <div className="flex h-16 justify-between items-center gap-4 p-4 backdrop-blur bg-white/30 rounded-r-lg">
-            <div className="flex h-full justify-start items-center gap-2">
+        <div className="flex flex-col justify-between w-full h-screen backdrop-blur bg-white/10 rounded-r-lg">
+          
+          <div className="flex h-14 sm:h-16 justify-between items-center gap-4 p-3 sm:p-4 backdrop-blur bg-white/30 rounded-r-lg">
+            <div className="flex items-center gap-3">
+             
+              <button
+                onClick={() => dispatch(clearSelectedUser())}
+                className="sm:hidden p-1 rounded-full hover:bg-gray-200/40"
+              >
+              <GiFastBackwardButton />     
+         </button>
+
               {!isGroup ? (
-                <img className="w-8 rounded-full" src={userSelected.picture} alt="user" />
+                <img
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
+                  src={userSelected.picture}
+                  alt="user"
+                />
               ) : (
                 <div
-                  className="w-8 rounded-full flex justify-center items-center"
-                  style={{ backgroundColor: getColorFromName(userSelected.nickname) }}
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex justify-center items-center"
+                  style={{
+                    backgroundColor: getColorFromName(userSelected.nickname),
+                  }}
                 >
                   {userSelected.picture ? (
-                    <img src={userSelected.picture} alt={userSelected.nickname} className="w-full h-full object-cover" />
+                    <img
+                      src={userSelected.picture}
+                      alt={userSelected.nickname}
+                      className="w-full h-full object-cover rounded-full"
+                    />
                   ) : (
-                    <span className="text-white font-semibold">
+                    <span className="text-white font-semibold text-sm sm:text-base">
                       {userSelected.nickname.charAt(0).toUpperCase()}
                     </span>
                   )}
                 </div>
               )}
-              <div className="text-lg min-w-max">
-                {userSelected.nickname}
+              <div className="flex flex-col">
+                <span className="text-sm sm:text-lg font-semibold">
+                  {userSelected.nickname}
+                </span>
                 {!isGroup && onlineUsers.includes(userSelected?._id) && (
-                  <div className="text-green-400">Online</div>
+                  <span className="text-green-400 text-xs">Online</span>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Messages */}
-          <div className="flex flex-col gap-2 overflow-y-scroll h-[500px] px-2 py-4">
-            {chatHistory.map((msg) => (
-               console.log("msg",msg),
-                <div key={msg._id } className={`flex gap-4 ${msg.sender._id && (msg.sender._id === me?._id ? "justify-end":"justify-start") || msg.sender && (msg.sender===me._id ? "justify-end":"justify-start")}`}>
-                  <img src={msg.sender.picture || (msg.sender._id ? msg.sender.picture : me.picture)} alt="profile" className="aspect-[1/1] rounded-full w-8 h-8"/>
+         
+          <div className="flex flex-col gap-3 overflow-y-auto flex-1 px-2 py-3 sm:px-4 sm:py-4 scrollbar-thin scrollbar-thumb-gray-400">
+            {loading ? (
+              <div className="flex justify-center items-center h-full">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+              </div>
+            ) : chatHistory.length === 0 ? (
+              <p className="text-gray-500 text-center mt-4">
+                No messages yet...
+              </p>
+            ) : (
+              chatHistory.map((msg) => (
+                <div
+                  key={msg._id}
+                  className={`flex items-end gap-2 ${
+                    msg.sender._id === me?._id || msg.sender === me._id
+                      ? "justify-end"
+                      : "justify-start"
+                  }`}
+                >
+                  <img
+                    src={
+                      msg.sender.picture ||
+                      (msg.sender._id ? msg.sender.picture : me.picture)
+                    }
+                    alt="profile"
+                    className="rounded-full w-6 h-6 sm:w-8 sm:h-8"
+                  />
                   <div
-                    className={`max-w-[70%] px-4 py-2 rounded-xl ${
-                      msg.sender._id && (msg.sender._id === me?._id ? "bg-blue-500 text-white":"bg-gray-300 text-black") || msg.sender && (msg.sender===me._id ? "bg-blue-500 text-white":"bg-gray-300 text-black")
+                    className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm sm:text-base ${
+                      msg.sender._id === me?._id || msg.sender === me._id
+                        ? "bg-blue-500 text-white rounded-br-none"
+                        : "bg-gray-300 text-black rounded-bl-none"
                     }`}
                   >
-                    {msg.message.trim().length>0 ? <span>{msg.message}</span>: <img src={msg.mediaKey} alt="media" className='h-48 w-48'/>}
+                    {msg.message.trim().length > 0 ? (
+                      <span>{msg.message}</span>
+                    ) : (
+                      <img
+                        src={msg.mediaKey}
+                        alt="media"
+                        className="h-40 w-40 sm:h-48 sm:w-48 rounded-lg object-cover"
+                      />
+                    )}
                   </div>
                 </div>
-              
-            ))}
+              ))
+            )}
           </div>
 
-          {/* Input */}
-          <form className="flex gap-4 p-4" onSubmit={sendmsg}>
-            <div className="flex rounded-2xl w-11/12 items-center bg-white/10 py-2 px-4">
+        
+          <form
+            className="flex gap-2 sm:gap-4 "
+            onSubmit={sendmsg}
+          >
+            <div className="flex rounded-full w-full items-center bg-white/10 py-2 px-3 sm:px-2">
               <input
                 type="text"
                 value={message}
                 onChange={handleChange}
                 placeholder="Send a message..."
-                className="bg-transparent outline-none w-full"
+                className="bg-transparent outline-none w-full text-sm sm:text-base"
               />
-             <Media me={me} userSelected={userSelected} isGroup={isGroup} chatHistory={chatHistory}/>
-              
-              
+              <Media
+                me={me}
+                userSelected={userSelected}
+                isGroup={isGroup}
+                chatHistory={chatHistory}
+              />
             </div>
-            <button type="submit">
-              <img src={send_button} alt="send" />
+            <button
+              type="submit"
+              className="p-2 bg-blue-500 hover:bg-blue-600 rounded-full flex justify-center items-center"
+            >
+              <img src={send_button} alt="send" className="w-5 sm:w-6 sm:h-4" />
             </button>
           </form>
         </div>
