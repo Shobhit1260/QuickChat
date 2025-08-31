@@ -96,7 +96,7 @@ function Home() {
       <div className="w-full h-screen flex flex-col sm:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:m-4">
   
         <div
-          className={`w-full md:w-1/4 h-screen sm:h-full border-b sm:border-b-0 sm:border-r border-gray-700 
+          className={`w-full md:w-1/4 h-screen sm:h-full border-b sm:border-b-0 sm:border-r border-gray-700 ${activeView==="left" ? "block" : "hidden"}  md:block
             `}
         >
           <LeftSideBar
@@ -106,14 +106,14 @@ function Home() {
           />
         </div>
 
-        <div className={`flex-1 md:h-full w-full md:w-1/2 `}>
+        <div className={`flex-1 md:h-full w-full md:w-1/2 ${activeView==="chat" ? "block" : "hidden"} `}>
           <Chat onBack={() => setActiveView("left")} onRight={() => setActiveView("right")}  
           />
         </div>
 
        
         <div
-          className={`md:w-1/4 border-l border-gray-700`}
+          className={`md:w-1/4 border-l border-gray-700 ${activeView==="right" ? "block" : "hidden"}  md:block h-screen sm:h-full  `}
         >
           <RightSideBar onBack={()=>setActiveView("chat")} />
         </div>  
