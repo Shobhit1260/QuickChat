@@ -74,7 +74,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, currentData, type }) => {
                 src={
                   profilePhoto
                     ? URL.createObjectURL(profilePhoto)
-                    : currentData.picture || "https://via.placeholder.com/100"
+                    : currentData.picture 
                 }
                 alt="Profile"
                 className="w-24 h-24 rounded-full object-cover mb-2 border border-gray-300 dark:border-gray-700"
