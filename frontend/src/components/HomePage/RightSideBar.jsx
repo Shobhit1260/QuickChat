@@ -17,7 +17,7 @@ function RightSideBar({onBack}) {
   const isGroup = Array.isArray(userSelected?.members);
 
   return (
-    <div className="p-4 md:w-full h-screen border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex flex-col justify-between">
+    <div className="p-4 md:w-full h-screen border-l border-gray-200 dark:border-gray-700  dark:bg-gray-900 flex flex-col justify-between">
              <button
                  onClick={() => {
                     if (window.innerWidth < 640) onBack();

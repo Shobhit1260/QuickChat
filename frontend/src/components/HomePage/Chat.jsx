@@ -247,7 +247,7 @@ function Chat({onBack,onRight}) {
       </div>
 
       <form
-        className="flex gap-2 sm:gap-4 w-full p-2 h-16 mb-4"
+        className="flex gap-2 sm:gap-4 w-full p-2 h-16 mb-2"
         onSubmit={sendmsg}
       >
         <div className="flex rounded-full w-full items-center bg-white/10 px-4">

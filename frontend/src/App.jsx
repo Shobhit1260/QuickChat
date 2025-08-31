@@ -13,7 +13,7 @@ function App() {
   const [selectedUser,setSelectedUser]=useState(false)
   return (
 
-    <div className="object-center  h-screen w-full flex justify-center items-center p-12"
+    <div className="object-cover h-screen w-full flex justify-center items-center "
       style={{ backgroundImage: `url(${bgImage})` }}
       >
         
