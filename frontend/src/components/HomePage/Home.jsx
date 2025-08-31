@@ -94,7 +94,7 @@ function Home() {
   return (
     <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-2 sm:px-6 py-4 md:m-4">
       
-      <div className="hidden w-full h-screen sm:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:m-4">
+      <div className="w-full h-screen sm:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:m-4">
          {
           activeView==="left" ?
         <div
@@ -126,7 +126,7 @@ function Home() {
         </div> : null
        }
 
-      <div className=" w-full h-screen md:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:m-4">
+      {/* <div className=" w-full h-screen md:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:m-4">
        <div
           className={`w-full md:w-1/4 h-screen sm:h-full border-b sm:border-b-0 sm:border-r border-gray-700  md:block `}>
          <LeftSideBar
@@ -145,7 +145,7 @@ function Home() {
         >
           <RightSideBar onBack={()=>setActiveView("chat")} />
         </div> 
-        </div>
+        </div> */}
     
       <CreateGroupModal
         isOpen={showGroupModal}
