@@ -125,8 +125,6 @@ function Home() {
 
   
   <div className="hidden md:flex w-full h-full bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-700">
-    
-    
     <div className="md:w-1/4 border-r border-gray-700">
       <LeftSideBar
         leftSideBarData={leftSideBarData}

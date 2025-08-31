@@ -23,7 +23,7 @@ function RightSideBar({onBack}) {
                     if (window.innerWidth < 640) onBack();
                     
                   }}
-                  className="sm:hidden p-1 rounded-full hover:bg-gray-200/40"
+                  className="sm:hidden p-1 rounded-full hover:bg-gray-200/40 text-white"
                 >
                   <FaBackward />
                 </button>
