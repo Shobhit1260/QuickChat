@@ -1,3 +1,3 @@
-const BASE= "https://quickchat-backend-1.onrender.com" ;
+const BASE= "https://quickchat-backend-sg72.onrender.com" ;
  export default BASE;
  
