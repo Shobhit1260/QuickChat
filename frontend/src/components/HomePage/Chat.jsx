@@ -140,7 +140,7 @@ function Chat({onBack,onRight}) {
   }
 
   return (
-    <div className="flex flex-col justify-between md:w-full h-screen backdrop-blur bg-white/10 rounded-r-lg pb-4 pl-4 pr-4">
+    <div className="flex flex-col justify-between md:w-full md:h-screen backdrop-blur bg-white/10 rounded-r-lg pb-4 pl-4 pr-4">
       
       <div className="flex h-14 sm:h-16 justify-between items-center gap-4 p-3 sm:p-4 backdrop-blur bg-white/30 rounded-lg">
         <div className="flex items-center gap-3">
@@ -149,19 +149,11 @@ function Chat({onBack,onRight}) {
               if (window.innerWidth < 640) onBack();
               else dispatch(clearSelectedUser());
             }}
-            className="sm:hidden p-1 rounded-full hover:bg-gray-200/40"
+            className="sm:hidden p-1 rounded-full hover:bg-gray-200/40 text-white"
           >
             <FaBackward />
           </button>
-          <button
-            onClick={() => {
-              if (window.innerWidth < 640) onRight();
-              else dispatch(clearSelectedUser());
-            }}
-            className="sm:hidden p-1 rounded-full hover:bg-gray-200/40"
-          >
-            <FaForward />
-          </button>
+          
 
           {!isGroup ? (
             <img
@@ -196,8 +188,17 @@ function Chat({onBack,onRight}) {
               <span className="text-green-400 text-xs">Online</span>
             )}
           </div>
+          <button
+            onClick={() => {
+              if (window.innerWidth < 640) onRight();
+              else dispatch(clearSelectedUser());
+            }}
+            className="sm:hidden p-1 rounded-full hover:bg-gray-200/40 text-white"
+          >
+            <FaForward />
+          </button>
         </div>
-
+        
         
       </div>
 
