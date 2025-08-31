@@ -140,7 +140,7 @@ function Chat({onBack,onRight}) {
   }
 
   return (
-    <div className="flex flex-col justify-between w-full h-screen backdrop-blur bg-white/10 rounded-r-lg pb-4 pl-4 pr-4">
+    <div className="flex flex-col justify-between lg:w-1/3 h-screen backdrop-blur bg-white/10 rounded-r-lg pb-4 pl-4 pr-4">
       
       <div className="flex h-14 sm:h-16 justify-between items-center gap-4 p-3 sm:p-4 backdrop-blur bg-white/30 rounded-lg">
         <div className="flex items-center gap-3">

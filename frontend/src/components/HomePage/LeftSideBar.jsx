@@ -91,7 +91,7 @@ console.log("leftSideBarData:", leftSideBarData);
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full sm:w-[320px] lg:w-[400px] h-full px-4 py-4 bg-gradient-to-b from-gray-900/90 to-gray-800/90 text-white rounded-l-2xl backdrop-blur-lg">
+    <div className="flex flex-col gap-4 w-full sm:w-[320px] lg:w-1/3 h-full px-4 py-4 bg-gradient-to-b from-gray-900/90 to-gray-800/90 text-white rounded-l-2xl backdrop-blur-lg">
    
       <div className="flex justify-between items-center p-2 w-full">
         <div className="flex gap-2 items-center">
