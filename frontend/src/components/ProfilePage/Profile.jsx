@@ -15,8 +15,8 @@ function Profile() {
     const sendTokenToBackend = async () => {
       const token = await getAccessTokenSilently();
       localStorage.setItem("token", token);
-
-      const res = await fetch(`${BASE}/v1/storeuser`, {
+      
+      const res = await fetch(`https://quickchat-backend-sg72.onrender.com/v1/storeuser`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
