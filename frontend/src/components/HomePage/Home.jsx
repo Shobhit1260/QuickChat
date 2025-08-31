@@ -93,11 +93,10 @@ function Home() {
 
   return (
     <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-2 sm:px-6 py-4">
-      <div className="w-full h-screen flex flex-col sm:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 sm:m-4">
-        
-        
+      <div className="w-full h-screen flex flex-col sm:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:m-4">
+  
         <div
-          className={`w-full md:w-1/3 h-[40vh] sm:h-full border-b sm:border-b-0 sm:border-r border-gray-700 
+          className={`w-full md:w-1/3 h-screen sm:h-full border-b sm:border-b-0 sm:border-r border-gray-700 
             `}
         >
           <LeftSideBar
@@ -107,14 +106,14 @@ function Home() {
           />
         </div>
 
-        <div className={`flex-1 h-[40vh] md:h-full w-full md:w-1/3 `}>
+        <div className={`flex-1 md:h-full w-full md:w-1/3 `}>
           <Chat onBack={() => setActiveView("left")} onRight={() => setActiveView("right")}  
           />
         </div>
 
        
         <div
-          className={`hidden md:w-1/3 border-l border-gray-700 `}
+          className={`md:w-1/3 border-l border-gray-700`}
         >
           <RightSideBar onBack={()=>setActiveView("chat")} />
         </div>  
