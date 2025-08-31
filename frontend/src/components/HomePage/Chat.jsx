@@ -130,7 +130,7 @@ function Chat({onBack,onRight}) {
 
   if (!userSelected || Object.keys(userSelected).length === 0) {
     return (
-      <div className="w-full h-full backdrop-blur-lg bg-white/10 flex flex-col gap-4 justify-center items-center rounded-r-xl">
+      <div className="w-full max-h-screen min-h-screen backdrop-blur-lg bg-white/10 flex flex-col gap-4 justify-center items-center rounded-r-xl">
         <img src={logo_icon} alt="logo" className="w-24 sm:w-32" />
         <div className="text-xl sm:text-2xl text-center px-4">
           Chat anytime, anywhere
