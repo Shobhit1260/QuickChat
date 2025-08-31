@@ -97,7 +97,7 @@ function Home() {
         
         
         <div
-          className={`w-full sm:w-1/3 lg:w-1/4 h-[40vh] sm:h-full border-b sm:border-b-0 sm:border-r border-gray-700 
+          className={`w-full md:w-1/3 h-[80vh] sm:h-full border-b sm:border-b-0 sm:border-r border-gray-700 
             `}
         >
           <LeftSideBar
@@ -107,15 +107,14 @@ function Home() {
           />
         </div>
 
-        <div className={`flex-1 h-full `}>
-          <Chat onBack={() => setActiveView("left")} onRight={() => setActiveView("right")}
-           
+        <div className={`flex-1 h-full  w-full md:w-1/3`}>
+          <Chat onBack={() => setActiveView("left")} onRight={() => setActiveView("right")}  
           />
         </div>
 
        
         <div
-          className={`w-full sm:w-1/4 border-l border-gray-700 `}
+          className={`w-full md:w-1/3 border-l border-gray-700 `}
         >
           <RightSideBar onBack={()=>setActiveView("chat")} />
         </div>  
