@@ -99,24 +99,32 @@ function Home() {
           className={`w-full md:w-1/4 h-screen sm:h-full border-b sm:border-b-0 sm:border-r border-gray-700 ${activeView==="left" ? "block" : "hidden"}  md:block
             `}
         >
-          <LeftSideBar
+        {
+          activeView==="left" ? <LeftSideBar
             leftSideBarData={leftSideBarData}
             onOpenGroupModal={() => setShowGroupModal(true)}
             onRight={() => setActiveView("chat")}
-          />
+          /> :null
+        }  
         </div>
 
-        <div className={`flex-1 md:h-full w-full md:w-1/2 ${activeView==="chat" ? "block" : "hidden"} `}>
+        {
+           activeView==="chat" ?           <div className={`flex-1 md:h-full w-full md:w-1/2  `}>
           <Chat onBack={() => setActiveView("left")} onRight={() => setActiveView("right")}  
           />
-        </div>
+        </div> : null 
+        }
 
-       
-        <div
-          className={`md:w-1/4 border-l border-gray-700 ${activeView==="right" ? "block" : "hidden"}  md:block h-screen sm:h-full  `}
+
+       {
+         activeView==="right"?  <div
+          className={`md:w-1/4 border-l border-gray-700   `}
         >
           <RightSideBar onBack={()=>setActiveView("chat")} />
-        </div>  
+        </div> : null
+       }
+       
+         
       </div>
 
     
