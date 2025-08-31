@@ -140,7 +140,7 @@ function Chat({onBack,onRight}) {
   }
 
   return (
-    <div className="flex flex-col justify-between md:w-full md:h-screen backdrop-blur bg-white/10 rounded-r-lg pb-4 pl-4 pr-4">
+    <div className="flex flex-col max-h-screen min-h-screen justify-between md:w-full backdrop-blur bg-white/10 rounded-r-lg pb-4 pl-4 pr-4">
       
       <div className="flex h-14 sm:h-16 justify-between items-center gap-4 p-3 sm:p-4 backdrop-blur bg-white/30 rounded-lg">
         <div className="flex items-center gap-3">
@@ -248,7 +248,7 @@ function Chat({onBack,onRight}) {
       </div>
 
       <form
-        className="flex justify-between items-center w-full p-2 sm:h-8 md:h-16 mb-2"
+        className="static bottom-12 flex justify-between items-center w-full p-2 sm:h-8 md:h-16 mb-2"
         onSubmit={sendmsg}
       >
         <div className="flex rounded-full w-full items-center bg-white/10 px-4">
