@@ -1,3 +1,3 @@
-const BASE= process.env.REACT_APP_BACKEND_URL ;
+const BASE= "https://quickchat-backend-1.onrender.com" ;
  export default BASE;
- console.log("BASE URL:", BASE);
+ 
