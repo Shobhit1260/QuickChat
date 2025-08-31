@@ -87,8 +87,7 @@ function Profile() {
 
         <button
           onClick={() => {
-            logout();
-            dispatch(deleteMe());
+            logout(); 
             localStorage.removeItem("token");
           }}
           className="w-full sm:w-auto mt-4 px-5 py-2 sm:px-6 sm:py-3 

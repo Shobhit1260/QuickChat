@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo_icon from "../../chat-app-assests/logo_icon.svg";
 import send_button from "../../chat-app-assests/send_button.svg";
-import { GiFastBackwardButton } from "react-icons/gi";
 import { useSelector, useDispatch } from "react-redux";
 import socket from "./socket.js";
 import Media from "./Media.jsx";
 import BASE from "../../api.js";
 import { clearSelectedUser } from "../../Redux/UserSlice.js";
+import { FaBackward } from "react-icons/fa6";
+import { FaForward } from "react-icons/fa6";
 
-function Chat() {
+function Chat({onBack,onRight}) {
   const dispatch = useDispatch();
   const userSelected = useSelector((state) => state?.userSelected?.value);
   const me = useSelector((state) => state?.me?.value);
@@ -26,6 +27,10 @@ function Chat() {
   useEffect(() => {
     socket.connect();
     socket.on("online-users", (online) => setOnlineUsers(online));
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -37,16 +42,6 @@ function Chat() {
   const sendmsg = (e) => {
     e.preventDefault();
     if (!message.trim() || !me?._id || !userSelected?._id) return;
-
-    const newMsg = {
-      _id: Date.now(),
-      sender: me._id,
-      receiver: userSelected._id,
-      receiverModel: isGroup ? "Group" : "User",
-      message,
-      mediaKey: null,
-      isRead: false,
-    };
 
     if (isGroup) {
       socket.emit("sendGroupMessage", {
@@ -62,9 +57,14 @@ function Chat() {
         mediaKey: "",
         fromUserId: me._id,
       });
+      socket.emit("sendPrivateMessage", {
+        toUserId: me._id,
+        message,
+        mediaKey: "",
+        fromUserId: me._id,
+      });
     }
 
-    setChatHistory((prev) => [...prev, newMsg]);
     setMessage("");
   };
 
@@ -94,13 +94,12 @@ function Chat() {
 
     fetchHistory();
 
-    socket.off("receivedPrivateMessage");
-    socket.off("receivedGroupMessage");
-
     const handleReceive = (data) => {
       setChatHistory((prev) => [...prev, data]);
     };
 
+    socket.off("receivedPrivateMessage");
+    socket.off("receivedGroupMessage");
     socket.on("receivedPrivateMessage", handleReceive);
     socket.on("receivedGroupMessage", handleReceive);
 
@@ -129,145 +128,155 @@ function Chat() {
     return colors[Math.abs(hash % colors.length)];
   };
 
-  return (
-    <>
-      {Object.keys(userSelected).length === 0 ? (
-        <div className="w-full h-full backdrop-blur-lg bg-white/10 flex flex-col gap-4 justify-center items-center rounded-r-xl">
-          <img src={logo_icon} alt="logo" className="w-24 sm:w-32" />
-          <div className="text-xl sm:text-2xl text-center px-4">
-            Chat anytime, anywhere
-          </div>
+  if (!userSelected || Object.keys(userSelected).length === 0) {
+    return (
+      <div className="w-full h-full backdrop-blur-lg bg-white/10 flex flex-col gap-4 justify-center items-center rounded-r-xl">
+        <img src={logo_icon} alt="logo" className="w-24 sm:w-32" />
+        <div className="text-xl sm:text-2xl text-center px-4">
+          Chat anytime, anywhere
         </div>
-      ) : (
-        <div className="flex flex-col justify-between w-full h-screen backdrop-blur bg-white/10 rounded-r-lg">
-          
-          <div className="flex h-14 sm:h-16 justify-between items-center gap-4 p-3 sm:p-4 backdrop-blur bg-white/30 rounded-r-lg">
-            <div className="flex items-center gap-3">
-             
-              <button
-                onClick={() => dispatch(clearSelectedUser())}
-                className="sm:hidden p-1 rounded-full hover:bg-gray-200/40"
-              >
-              <GiFastBackwardButton />     
-         </button>
+      </div>
+    );
+  }
 
-              {!isGroup ? (
+  return (
+    <div className="flex flex-col justify-between w-full h-screen backdrop-blur bg-white/10 rounded-r-lg pb-4 pl-4 pr-4">
+      
+      <div className="flex h-14 sm:h-16 justify-between items-center gap-4 p-3 sm:p-4 backdrop-blur bg-white/30 rounded-lg">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              if (window.innerWidth < 640) onBack();
+              else dispatch(clearSelectedUser());
+            }}
+            className="sm:hidden p-1 rounded-full hover:bg-gray-200/40"
+          >
+            <FaBackward />
+          </button>
+          <button
+            onClick={() => {
+              if (window.innerWidth < 640) onRight();
+              else dispatch(clearSelectedUser());
+            }}
+            className="sm:hidden p-1 rounded-full hover:bg-gray-200/40"
+          >
+            <FaForward />
+          </button>
+
+          {!isGroup ? (
+            <img
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
+              src={userSelected.picture}
+              alt="user"
+            />
+          ) : (
+            <div
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex justify-center items-center"
+              style={{ backgroundColor: getColorFromName(userSelected.nickname) }}
+            >
+              {userSelected.picture ? (
                 <img
-                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
                   src={userSelected.picture}
-                  alt="user"
+                  alt={userSelected.nickname}
+                  className="w-full h-full object-cover rounded-full"
                 />
               ) : (
-                <div
-                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex justify-center items-center"
-                  style={{
-                    backgroundColor: getColorFromName(userSelected.nickname),
-                  }}
-                >
-                  {userSelected.picture ? (
-                    <img
-                      src={userSelected.picture}
-                      alt={userSelected.nickname}
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  ) : (
-                    <span className="text-white font-semibold text-sm sm:text-base">
-                      {userSelected.nickname.charAt(0).toUpperCase()}
-                    </span>
-                  )}
-                </div>
-              )}
-              <div className="flex flex-col">
-                <span className="text-sm sm:text-lg font-semibold">
-                  {userSelected.nickname}
+                <span className="text-white font-semibold text-sm sm:text-base">
+                  {userSelected.nickname.charAt(0).toUpperCase()}
                 </span>
-                {!isGroup && onlineUsers.includes(userSelected?._id) && (
-                  <span className="text-green-400 text-xs">Online</span>
-                )}
-              </div>
+              )}
             </div>
-          </div>
+          )}
 
-         
-          <div className="flex flex-col gap-3 overflow-y-auto flex-1 px-2 py-3 sm:px-4 sm:py-4 scrollbar-thin scrollbar-thumb-gray-400">
-            {loading ? (
-              <div className="flex justify-center items-center h-full">
-                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
-              </div>
-            ) : chatHistory.length === 0 ? (
-              <p className="text-gray-500 text-center mt-4">
-                No messages yet...
-              </p>
-            ) : (
-              chatHistory.map((msg) => (
-                <div
-                  key={msg._id}
-                  className={`flex items-end gap-2 ${
-                    msg.sender._id === me?._id || msg.sender === me._id
-                      ? "justify-end"
-                      : "justify-start"
-                  }`}
-                >
-                  <img
-                    src={
-                      msg.sender.picture ||
-                      (msg.sender._id ? msg.sender.picture : me.picture)
-                    }
-                    alt="profile"
-                    className="rounded-full w-6 h-6 sm:w-8 sm:h-8"
-                  />
-                  <div
-                    className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm sm:text-base ${
-                      msg.sender._id === me?._id || msg.sender === me._id
-                        ? "bg-blue-500 text-white rounded-br-none"
-                        : "bg-gray-300 text-black rounded-bl-none"
-                    }`}
-                  >
-                    {msg.message.trim().length > 0 ? (
-                      <span>{msg.message}</span>
-                    ) : (
-                      <img
-                        src={msg.mediaKey}
-                        alt="media"
-                        className="h-40 w-40 sm:h-48 sm:w-48 rounded-lg object-cover"
-                      />
-                    )}
-                  </div>
-                </div>
-              ))
+          <div className="flex flex-col w-full">
+            <span className="text-xl text-white sm:text-lg font-semibold">
+              {userSelected.nickname}
+            </span>
+            {!isGroup && onlineUsers.includes(userSelected?._id) && (
+              <span className="text-green-400 text-xs">Online</span>
             )}
           </div>
+        </div>
 
         
-          <form
-            className="flex gap-2 sm:gap-4 "
-            onSubmit={sendmsg}
-          >
-            <div className="flex rounded-full w-full items-center bg-white/10 py-2 px-3 sm:px-2">
-              <input
-                type="text"
-                value={message}
-                onChange={handleChange}
-                placeholder="Send a message..."
-                className="bg-transparent outline-none w-full text-sm sm:text-base"
-              />
-              <Media
-                me={me}
-                userSelected={userSelected}
-                isGroup={isGroup}
-                chatHistory={chatHistory}
-              />
-            </div>
-            <button
-              type="submit"
-              className="p-2 bg-blue-500 hover:bg-blue-600 rounded-full flex justify-center items-center"
+      </div>
+
+     
+      <div className="flex flex-col gap-3 overflow-y-auto flex-1 px-2 py-3 sm:px-4 sm:py-4 scrollbar-thin scrollbar-thumb-gray-400">
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        ) : chatHistory.length === 0 ? (
+          <p className="text-gray-500 text-center mt-4">No messages yet...</p>
+        ) : (
+          chatHistory.map((msg) => (
+            <div
+              key={msg._id}
+              className={`flex items-end gap-2 ${
+                msg.sender._id === me?._id || msg.sender === me._id
+                  ? "justify-end"
+                  : "justify-start"
+              }`}
             >
-              <img src={send_button} alt="send" className="w-5 sm:w-6 sm:h-4" />
-            </button>
-          </form>
+              <img
+                src={msg.sender.picture || me.picture}
+                alt="profile"
+                className="rounded-full w-6 h-6 sm:w-8 sm:h-8"
+              />
+              <div
+                className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm sm:text-base ${
+                  msg.sender._id === me?._id || msg.sender === me._id
+                    ? "bg-blue-500 text-white rounded-br-none"
+                    : "bg-gray-300 text-black rounded-bl-none"
+                }`}
+              >
+                {msg.message?.trim() ? (
+                  <span>{msg.message}</span>
+                ) : msg.mediaKey ? (
+                  <img
+                    src={msg.mediaKey}
+                    alt="media"
+                    className="h-40 w-40 sm:h-48 sm:w-48 rounded-lg object-cover"
+                  />
+                ) : null}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <form
+        className="flex gap-2 sm:gap-4 w-full p-2 h-16 mb-4"
+        onSubmit={sendmsg}
+      >
+        <div className="flex rounded-full w-full items-center bg-white/10 px-4">
+          <input
+            type="text"
+            value={message}
+            onChange={handleChange}
+            placeholder="Send a message..."
+            className="bg-transparent outline-none w-full text-sm sm:text-base"
+          />
+          <Media
+            me={me}
+            userSelected={userSelected}
+            isGroup={isGroup}
+            chatHistory={chatHistory}
+          />
         </div>
-      )}
-    </>
+        <button
+          type="submit"
+          className="p-2 bg-blue-500 hover:bg-blue-600 rounded-full flex justify-center items-center w-5 sm:w-12 sm:h-12"
+        >
+          <img
+            src={send_button}
+            alt="send"
+            className="w-5 rounded-full sm:w-12 sm:h-12"
+          />
+        </button>
+      </form>
+    </div>
   );
 }
 

@@ -8,8 +8,9 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { toast } from "react-toastify";
 import BASE from "../../api.js";
 import EditProfileModal from "./EditProfile.jsx";
+import { FaForward } from "react-icons/fa6";
 
-function LeftSideBar({ leftSideBarData }) {
+function LeftSideBar({ leftSideBarData , onOpenGroupModal,onRight}) {
   const dispatch = useDispatch();
   const { logout } = useAuth0();
 
@@ -22,10 +23,8 @@ function LeftSideBar({ leftSideBarData }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
-  const [groupName, setGroupName] = useState("");
-  const [memberSelected, setMemberSelected] = useState([]);
-  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
-
+ 
+console.log("leftSideBarData:", leftSideBarData);
   const isGroup = Array.isArray(me?.members) && me.members.length > 0;
   const type = isGroup ? "group" : "user";
 
@@ -48,66 +47,10 @@ function LeftSideBar({ leftSideBarData }) {
   const filteredGroups =
     leftSideBarData.groups?.filter(
       (group) =>
-        group.members.includes(me?._id) &&
+        
         group.nickname.toLowerCase().includes(searchTerm.toLowerCase())
     ) || [];
-
-  const changeHandler = (e) => {
-    const userId = e.target.id;
-    if (e.target.checked) {
-      setMemberSelected((prev) => [...prev, userId]);
-    } else {
-      setMemberSelected((prev) => prev.filter((id) => id !== userId));
-    }
-  };
-
-  const createGroup = async (e) => {
-    e.preventDefault();
-
-    if (!groupName.trim()) {
-      toast.error("Please enter a group name");
-      return;
-    }
-
-    if (memberSelected.length === 0) {
-      toast.error("Please select at least one member");
-      return;
-    }
-
-    setIsCreatingGroup(true);
-
-    try {
-      const res = await fetch(`${BASE}/v1/creategroup`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          nickname: groupName.trim(),
-          membersId: memberSelected,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!data.success) {
-        toast.error(data.message || "Failed to create group");
-      } else {
-        setShowUsers(false);
-        setGroupName("");
-        setMemberSelected([]);
-        setMenu(false);
-        toast.success(data.message || "Group created successfully");
-      }
-    } catch (error) {
-      console.error("Error creating group:", error);
-      toast.error("Network error. Please try again.");
-    } finally {
-      setIsCreatingGroup(false);
-    }
-  };
+  
 
   const handleLogout = () => {
     try {
@@ -180,7 +123,7 @@ function LeftSideBar({ leftSideBarData }) {
               <button
                 className="text-left hover:text-blue-600 transition-colors"
                 onClick={() => {
-                  setShowUsers(true);
+                  onOpenGroupModal();
                   setMenu(false);
                 }}
               >
@@ -260,12 +203,23 @@ function LeftSideBar({ leftSideBarData }) {
               <span className="text-sm font-medium">{user.nickname}</span>
               <span className="text-xs text-gray-400">User</span>
             </div>
-          </div>
+           <button
+                      onClick={() => {
+                         if (window.innerWidth < 640) onRight();
+                         else dispatch(clearSelectedUser());
+                       }}
+                       className="sm:hidden p-1 rounded-full hover:bg-gray-200/40"
+                     >
+                       <FaForward />
+                     </button>
+           </div>
         ))}
 
        
         {filteredGroups.map((group) => (
+          
           <div
+          
             onClick={() => handleUserSelect(group)}
             key={group._id}
             className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700/70 ${
@@ -297,83 +251,8 @@ function LeftSideBar({ leftSideBarData }) {
       </div>
 
       
-      {showUsers && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="w-full max-w-lg bg-white rounded-xl shadow-2xl overflow-hidden">
-            <div className="flex justify-between items-center px-6 py-4 border-b">
-              <h2 className="text-lg font-bold">Create Group</h2>
-              <button
-                onClick={() => setShowUsers(false)}
-                className="text-gray-500 hover:text-red-500"
-              >
-                ✕
-              </button>
-            </div>
 
-            <form className="p-6 flex flex-col gap-6" onSubmit={createGroup}>
-              <div>
-                <label className="text-sm font-medium">Group Name *</label>
-                <input
-                  type="text"
-                  value={groupName}
-                  onChange={(e) => setGroupName(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 mt-1 outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={isCreatingGroup}
-                />
-              </div>
 
-              <div>
-                <label className="text-sm font-medium">
-                  Select Members * ({memberSelected.length})
-                </label>
-                <div className="mt-2 max-h-56 overflow-y-auto border rounded-lg p-2">
-                  {leftSideBarData.users?.map((user) => (
-                    <label
-                      key={user._id}
-                      className="flex justify-between items-center px-2 py-2 hover:bg-gray-50 rounded cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={user.picture}
-                          alt={user.nickname}
-                          className="w-8 h-8 rounded-full"
-                        />
-                        <span className="text-sm">{user.nickname}</span>
-                      </div>
-                      <input
-                        type="checkbox"
-                        id={user._id}
-                        checked={memberSelected.includes(user._id)}
-                        onChange={changeHandler}
-                        className="accent-blue-600"
-                        disabled={isCreatingGroup}
-                      />
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
-                  onClick={() => setShowUsers(false)}
-                  disabled={isCreatingGroup}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300"
-                  disabled={isCreatingGroup || !groupName.trim() || !memberSelected.length}
-                >
-                  {isCreatingGroup ? "Creating..." : "Create Group"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

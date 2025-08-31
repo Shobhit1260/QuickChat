@@ -358,7 +358,7 @@ exports.getallUsers=async(req,res)=>{
 
 exports.getallGroups = async (req, res) => {
   try {
-    const groups = await Group.find({});
+    const groups = await Group.find({}).populate('members');
     res.status(200).json({
       success: true,
       groups,
