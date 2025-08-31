@@ -92,75 +92,78 @@ function Home() {
   };
 
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-2 sm:px-6 py-4 md:m-4">
-      
-      <div className="w-full h-screen sm:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:m-4">
-         {
-          activeView==="left" ?
-        <div
-          className={`w-full md:w-1/4 h-screen sm:h-full border-b sm:border-b-0 sm:border-r border-gray-700  md:block `}>
-         <LeftSideBar
-            leftSideBarData={leftSideBarData}
-            onOpenGroupModal={() => setShowGroupModal(true)}
-            onRight={() => setActiveView("chat")}
-          /> 
-          </div>:null
-         }
+   <div className="w-full h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black px-2 sm:px-6 py-4 md:m-4">
 
-        {
-           activeView==="chat" ? 
-           <div 
-           className={`flex-1 md:h-full w-full md:w-1/2 `}>
-          <Chat onBack={() => setActiveView("left")} onRight={() => setActiveView("right")}  
-          />
-           </div> : null 
-        }
-
-
-       {
-         activeView==="right"?  
-         <div
-          className={`md:w-1/4 border-l border-gray-700`}
-        >
-          <RightSideBar onBack={()=>setActiveView("chat")} />
-        </div> : null
-       }
-
-      {/* <div className=" w-full h-screen md:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:m-4">
-       <div
-          className={`w-full md:w-1/4 h-screen sm:h-full border-b sm:border-b-0 sm:border-r border-gray-700  md:block `}>
-         <LeftSideBar
-            leftSideBarData={leftSideBarData}
-            onOpenGroupModal={() => setShowGroupModal(true)}
-            onRight={() => setActiveView("chat")}
-          /> 
-        </div>  
-         <div 
-           className={`flex-1 md:h-full w-full md:w-1/2 `}>
-          <Chat onBack={() => setActiveView("left")} onRight={() => setActiveView("right")}  
-          />
-          </div>
-          <div
-          className={`md:w-1/4 border-l border-gray-700`}
-        >
-          <RightSideBar onBack={()=>setActiveView("chat")} />
-        </div> 
-        </div> */}
+  
+  <div className="w-full h-full sm:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:hidden">
     
-      <CreateGroupModal
-        isOpen={showGroupModal}
-        onClose={() => setShowGroupModal(false)}
-        groupName={groupName}
-        setGroupName={setGroupName}
-        memberSelected={memberSelected}
-        setMemberSelected={setMemberSelected}
-        changeHandler={changeHandler}
-        isCreatingGroup={isCreatingGroup}
-        createGroup={createGroup}
+    {activeView === "left" && (
+      <div className="w-full h-full border-b border-gray-700">
+        <LeftSideBar
+          leftSideBarData={leftSideBarData}
+          onOpenGroupModal={() => setShowGroupModal(true)}
+          onRight={() => setActiveView("chat")}
+        />
+      </div>
+    )}
+
+    {activeView === "chat" && (
+      <div className="w-full h-full">
+        <Chat 
+          onBack={() => setActiveView("left")} 
+          onRight={() => setActiveView("right")} 
+        />
+      </div>
+    )}
+
+    {activeView === "right" && (
+      <div className="w-full h-full border-l border-gray-700">
+        <RightSideBar onBack={() => setActiveView("chat")} />
+      </div>
+    )}
+  </div>
+
+  
+  <div className="hidden md:flex w-full h-full bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-700">
+    
+    
+    <div className="md:w-1/4 border-r border-gray-700">
+      <LeftSideBar
         leftSideBarData={leftSideBarData}
+        onOpenGroupModal={() => setShowGroupModal(true)}
+        onRight={() => setActiveView("chat")}
       />
     </div>
+
+    
+    <div className="flex-1">
+      <Chat 
+        onBack={() => setActiveView("left")} 
+        onRight={() => setActiveView("right")} 
+      />
+    </div>
+
+    
+    <div className="md:w-1/4 border-l border-gray-700">
+      <RightSideBar onBack={() => setActiveView("chat")} />
+    </div>
   </div>
+
+ 
+  <CreateGroupModal
+    isOpen={showGroupModal}
+    onClose={() => setShowGroupModal(false)}
+    groupName={groupName}
+    setGroupName={setGroupName}
+    memberSelected={memberSelected}
+    setMemberSelected={setMemberSelected}
+    changeHandler={changeHandler}
+    isCreatingGroup={isCreatingGroup}
+    createGroup={createGroup}
+    leftSideBarData={leftSideBarData}
+  />
+</div>
+
   );
 }
 
