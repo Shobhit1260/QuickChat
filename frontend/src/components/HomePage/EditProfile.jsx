@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import BASE from "../../api.js";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setMe } from "../../Redux/meSlice.js";
 
 const EditProfileModal = ({ isOpen, onClose, onSave, currentData, type }) => {
  
@@ -9,7 +12,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, currentData, type }) => {
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
-
+  const dispatch = useDispatch();
   const handleSave = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -39,8 +42,9 @@ const EditProfileModal = ({ isOpen, onClose, onSave, currentData, type }) => {
       setLoading(false);
       console.log("Response data:", data); 
       if (res.ok) {
-        console.log("Update successful:", data);
+        toast.success("Profile Updates successfully");
         onSave?.(type === "user" ? data.user : data.group);
+        dispatch(setMe((type === "user" ? data.user : data.group)))
         onClose();
       } else {
         alert(data.message || "Something went wrong!");

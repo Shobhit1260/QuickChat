@@ -188,9 +188,11 @@ console.log("leftSideBarData:", leftSideBarData);
        
         {filteredUsers.map((user) => (
           <div
-            onClick={() => handleUserSelect(user)}
+            onClick={() =>{ handleUserSelect(user),
+                          onRight();
+                          }}
             key={user._id}
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer justify-between transition-all hover:bg-gray-700/70 ${
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700/70 ${
               selectedUser._id === user._id ? "bg-gray-700/90" : ""
             }`}
           >
@@ -203,15 +205,7 @@ console.log("leftSideBarData:", leftSideBarData);
               <span className="text-sm font-medium">{user.nickname}</span>
               <span className="text-xs text-gray-400">User</span>
             </div>
-           <button
-                     onClick={() => {
-                         if (window.innerWidth < 640) onRight();
-                         else dispatch(clearSelectedUser());
-                       }}
-                       className="sm:hidden p-1 rounded-full hover:bg-gray-200/40"
-                     >
-                       <FaForward />
-                     </button>
+           
            </div>
         ))}
 
@@ -220,9 +214,9 @@ console.log("leftSideBarData:", leftSideBarData);
           
           <div
           
-            onClick={() => handleUserSelect(group)}
+            onClick={() => {handleUserSelect(group),onRight()}}
             key={group._id}
-            className={`flex items-center gap-3 px-3 py-2 justify-between rounded-lg cursor-pointer transition-all hover:bg-gray-700/70 ${
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all hover:bg-gray-700/70 ${
               selectedUser._id === group._id ? "bg-gray-700/90" : ""
             }`}
           >
@@ -246,15 +240,7 @@ console.log("leftSideBarData:", leftSideBarData);
                 {group.members?.length} members
               </span>
             </div>
-            <button
-                     onClick={() => {
-                         if (window.innerWidth < 640) onRight();
-                         else dispatch(clearSelectedUser());
-                       }}
-                       className="sm:hidden p-1 rounded-full hover:bg-gray-200/40"
-                     >
-                       <FaForward />
-                     </button>
+            
           </div>
         ))}
       </div>

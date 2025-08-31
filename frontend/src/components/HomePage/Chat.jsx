@@ -203,7 +203,7 @@ function Chat({onBack,onRight}) {
       </div>
 
      
-      <div className="flex flex-col min:h-screen gap-3 overflow-y-auto flex-1 px-2 py-3 sm:px-4 sm:py-4 scrollbar-thin scrollbar-thumb-gray-400">
+      <div className="flex flex-col min-h-screen gap-3 overflow-y-auto flex-1 px-2 py-3 sm:px-4 sm:py-4 scrollbar-thin scrollbar-thumb-gray-400">
         {loading ? (
           <div className="flex justify-center items-center h-full">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
@@ -248,7 +248,7 @@ function Chat({onBack,onRight}) {
       </div>
 
       <form
-        className="flex w-full p-2 sm:h-8 md:h-16 mb-2"
+        className="flex justify-between items-center w-full p-2 sm:h-8 md:h-16 mb-2"
         onSubmit={sendmsg}
       >
         <div className="flex rounded-full w-full items-center bg-white/10 px-4">
