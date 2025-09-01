@@ -35,7 +35,7 @@ function App() {
  console.log("Socket connected:", socket.connected);
   return (
 
-    <div className="object-cover  h-screen overflow-y-hidden overflow-x-hidden w-[100vw] flex justify-center items-center "
+    <div className="object-cover  h-screen   w-[100vw]  "
       style={{ backgroundImage: `url(${bgImage})` }}
       >
         

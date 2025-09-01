@@ -6,8 +6,13 @@ import CreateGroupModal from "./CreateGroupModal.jsx";
 import BASE from "../../api.js";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { useAuth0 } from '@auth0/auth0-react';
+import Login from "../LoginPage/Login.jsx";
 
 function Home() {
+
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
+
   const [leftSideBarData, setLeftSideBarData] = useState({ users: [], groups: [] });
   const me = useSelector((state) => state?.me?.value);
   const savedtoken = localStorage.getItem("token");
@@ -92,6 +97,8 @@ function Home() {
   };
 
   return (
+    <>
+   { isAuthenticated ?
    <div className="w-full h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
 
   
@@ -159,9 +166,10 @@ function Home() {
     createGroup={createGroup}
     leftSideBarData={leftSideBarData}
   />
-</div>
-
+</div>:<Login/>
+  }
+</>
   );
-}
 
+}
 export default Home;
