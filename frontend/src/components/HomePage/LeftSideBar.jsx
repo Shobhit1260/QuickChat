@@ -57,8 +57,10 @@ function LeftSideBar({ leftSideBarData , onOpenGroupModal,onRight}) {
       localStorage.removeItem("token");
       dispatch(clearSelectedUser());
       logout({
-        logoutParams: { returnTo: window.location.origin },
-      });
+       logoutParams: {
+       returnTo: window.location.origin, 
+      },
+   });
     } catch (error) {
       console.error("Logout error:", error);
       toast.error("Error during logout");

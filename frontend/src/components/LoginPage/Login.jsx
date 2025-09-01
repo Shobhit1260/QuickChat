@@ -23,7 +23,8 @@ function Login() {
           onClick={() =>
             loginWithRedirect({
               authorizationParams: {
-                redirect_uri: `${window.location.origin}/profile`, // redirect to profile after login
+                redirect_uri: `${window.location.origin}/profile`, 
+                prompt: "login", 
               },
             })
           }

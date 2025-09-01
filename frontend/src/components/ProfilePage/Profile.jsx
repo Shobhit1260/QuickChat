@@ -16,7 +16,7 @@ function Profile() {
       const token = await getAccessTokenSilently();
       localStorage.setItem("token", token);
       
-      const res = await fetch(`http://localhost:8000/v1/storeuser`, {
+      const res = await fetch(`${BASE}/v1/storeuser`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
@@ -88,7 +88,11 @@ function Profile() {
 
         <button
           onClick={() => {
-            logout(); 
+             logout({
+               logoutParams: {
+               returnTo: window.location.origin, 
+              },
+            });
             localStorage.removeItem("token");
           }}
           className="w-full sm:w-auto mt-4 px-5 py-2 sm:px-6 sm:py-3 
