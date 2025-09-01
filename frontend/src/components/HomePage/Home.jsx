@@ -102,7 +102,7 @@ function Home() {
    <div className="w-full h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
 
   
-  <div className="w-full h-full sm:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:hidden py-8">
+  <div className="w-full h-full sm:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:hidden ">
     
     {activeView === "left" && (
       <div className="w-full h-full border-b border-gray-700">
@@ -115,7 +115,7 @@ function Home() {
     )}
 
     {activeView === "chat" && (
-      <div className="w-full h-full">
+      <div className="w-full h-full py-8">
         <Chat 
           onBack={() => setActiveView("left")} 
           onRight={() => setActiveView("right")} 

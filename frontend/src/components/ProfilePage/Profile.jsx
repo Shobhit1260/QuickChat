@@ -49,7 +49,7 @@ function Profile() {
         w-11/12 max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 
         min-h-[420px] sm:min-h-[500px] 
         backdrop-blur bg-white/10 border border-white/20
-        rounded-2xl py-6 px-4 sm:p-8 mx-auto mt-10 
+        rounded-2xl py-6 px-4 sm:p-8 mx-auto 
         shadow-2xl flex flex-col items-center gap-5 animate-fade-in
       ">
         
