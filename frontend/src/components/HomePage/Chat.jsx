@@ -135,7 +135,7 @@ useEffect(() => {
   }
 
   return (
-    <div className="flex flex-col h-[100vh] p-4 justify-between md:w-full backdrop-blur bg-white/10 rounded-r-lg pb-4 pl-4 pr-4">
+    <div className="static flex flex-col h-[100vh] p-4 justify-between md:w-full backdrop-blur bg-white/10 rounded-r-lg pb-4 pl-4 pr-4">
       
       <div className="flex h-14 sm:h-16 justify-between items-center gap-4 p-3 sm:p-4 backdrop-blur bg-white/30 rounded-lg">
         <div className="flex items-center gap-3">
