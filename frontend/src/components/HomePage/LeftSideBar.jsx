@@ -24,7 +24,7 @@ function LeftSideBar({ leftSideBarData , onOpenGroupModal,onRight}) {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
  
-console.log("leftSideBarData:", leftSideBarData);
+
   const isGroup = Array.isArray(me?.members) && me.members.length > 0;
   const type = isGroup ? "group" : "user";
 

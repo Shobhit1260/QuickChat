@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import gallery_icon from "../../chat-app-assests/gallery_icon.svg";
-import socket from "./socket.js";
+import {socket} from "../../App.jsx";
 import BASE from "../../api.js";
-
+import { createPortal } from "react-dom";
 function Media({ me, userSelected, isGroup, chatHistory }) {
   const [preview, setPreview] = useState(false);
   const [file, setFile] = useState(null);
@@ -18,7 +18,7 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
       setPreview(true);
     }
   };
-
+  console.log("preview",preview);
   const handleSend = async (e) => {
     e.preventDefault();
     if (!file) return;
@@ -50,6 +50,8 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
         mediaKey: url,
         fromUserId: me?._id,
       };
+      console.log("Payload to send:", payload);
+      console.log("FileUrl:", fileURL);
       if (isGroup) {
         socket.emit("sendGroupMessage", {
           ...payload,
@@ -86,7 +88,8 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
           chat.url === fileURL ? { ...chat, status: "failed" } : chat
         )
       );
-    } finally {
+   } 
+    finally {
       setIsSending(false);
       setPreview(false);
       setFile(null);
@@ -95,7 +98,7 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
   };
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center ">
      
       <form encType="multipart/form-data">
         <input
@@ -107,88 +110,67 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
           accept="image/*,video/*,audio/*"
         />
         <label
-          htmlFor="fileInput"
-          className="cursor-pointer p-2 hover:bg-gray-100 rounded-full transition"
-        >
-          <img src={gallery_icon} alt="gallery" className="w-6 h-6" />
-        </label>
+  htmlFor="fileInput"
+  className="cursor-pointer p-2 rounded-full transition"
+>
+  <img
+    src={gallery_icon}
+    alt="gallery"
+    className="w-6 h-6 hover:brightness-75"
+  />
+</label>
       </form>
 
      
-      {preview && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-white p-5 rounded-2xl max-w-md w-full shadow-lg animate-fadeIn">
-            <h2 className="text-lg font-semibold mb-3">Preview</h2>
+      {preview &&
+  createPortal(
+    <div className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center ">
+      <div className="bg-white p-5 rounded-2xl max-w-md w-full shadow-lg animate-fadeIn">
+        <h2 className="text-lg font-semibold mb-3">Preview</h2>
 
-            <div className="rounded-lg overflow-hidden max-h-[60vh] mb-4">
-              {file && file.type.startsWith("image/") && (
-                <img
-                  src={fileURL}
-                  alt="preview"
-                  className="w-full h-auto object-contain"
-                />
-              )}
-
-              {file && file.type.startsWith("video/") && (
-                <video
-                  src={fileURL}
-                  controls
-                  className="w-full h-auto object-contain"
-                />
-              )}
-
-              {file && file.type.startsWith("audio/") && (
-                <audio src={fileURL} controls className="w-full" />
-              )}
-            </div>
-
-            
-            <div className="flex justify-end gap-3">
-              <button
-                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition disabled:opacity-50"
-                onClick={() => setPreview(false)}
-                disabled={isSending}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 disabled:bg-blue-300"
-                onClick={handleSend}
-                disabled={isSending}
-              >
-                {isSending ? (
-                  <>
-                    <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
-                    Sending...
-                  </>
-                ) : (
-                  "Send"
-                )}
-              </button>
-            </div>
-          </div>
+        <div className="rounded-lg max-h-[60vh] mb-4">
+          {file && file.type.startsWith("image/") && (
+            <img src={fileURL} alt="preview" className="w-full h-auto object-contain" />
+          )}
+          {file && file.type.startsWith("video/") && (
+            <video src={fileURL} controls className="w-full h-auto object-contain" />
+          )}
+          {file && file.type.startsWith("audio/") && (
+            <audio src={fileURL} controls className="w-full" />
+          )}
         </div>
-      )}
+
+        <div className="flex justify-end gap-3">
+          <button
+            className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition disabled:opacity-50"
+            onClick={() => setPreview(false)}
+            disabled={isSending}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 disabled:bg-blue-300"
+            onClick={handleSend}
+            disabled={isSending}
+          >
+            {isSending ? (
+              <>
+                <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
+                Sending...
+              </>
+            ) : (
+              "Send"
+            )}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  )}
+
 
       
-      <div className="hidden">
-        {chats.map((chat, idx) => (
-          <div key={idx} className="flex items-center gap-2">
-            <span>{chat.url}</span>
-            <span
-              className={`text-xs ${
-                chat.status === "sending"
-                  ? "text-yellow-500"
-                  : chat.status === "sent"
-                  ? "text-green-500"
-                  : "text-red-500"
-              }`}
-            >
-              {chat.status}
-            </span>
-          </div>
-        ))}
-      </div>
+      
     </div>
   );
 }

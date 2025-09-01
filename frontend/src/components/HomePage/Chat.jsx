@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import logo_icon from "../../chat-app-assests/logo_icon.svg";
 import send_button from "../../chat-app-assests/send_button.svg";
 import { useSelector, useDispatch } from "react-redux";
-import socket from "./socket.js";
+import {socket} from "../../App.jsx";
 import Media from "./Media.jsx";
 import BASE from "../../api.js";
 import { clearSelectedUser } from "../../Redux/UserSlice.js";
@@ -24,25 +24,14 @@ function Chat({onBack,onRight}) {
     Array.isArray(userSelected?.members) && userSelected.members.length > 0;
   const groupId = isGroup ? userSelected?._id : null;
 
-  useEffect(() => {
-    socket.connect();
-    socket.on("online-users", (online) => setOnlineUsers(online));
+  
 
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!me?._id) return;
-    socket.auth = { userId: me._id };
-    socket.emit("setup", me._id);
-  }, [me?._id]);
 
   const sendmsg = (e) => {
     e.preventDefault();
     if (!message.trim() || !me?._id || !userSelected?._id) return;
-
+    console.log("Sending message:", { message, to: userSelected._id });
+    
     if (isGroup) {
       socket.emit("sendGroupMessage", {
         toGroupId: userSelected._id,
@@ -127,7 +116,13 @@ function Chat({onBack,onRight}) {
     }
     return colors[Math.abs(hash % colors.length)];
   };
+const bottomRef = useRef(null);
 
+useEffect(() => {
+  if (bottomRef.current) {
+    bottomRef.current.scrollIntoView({ behavior: "smooth" });
+  }
+}, [chatHistory]);
   if (!userSelected || Object.keys(userSelected).length === 0) {
     return (
       <div className="w-full max-h-screen min-h-screen backdrop-blur-lg bg-white/10 flex flex-col gap-4 justify-center items-center rounded-r-xl">
@@ -140,7 +135,7 @@ function Chat({onBack,onRight}) {
   }
 
   return (
-    <div className="flex flex-col max-h-screen min-h-screen justify-between md:w-full backdrop-blur bg-white/10 rounded-r-lg pb-4 pl-4 pr-4">
+    <div className="flex flex-col h-[100vh] p-4 justify-between md:w-full backdrop-blur bg-white/10 rounded-r-lg pb-4 pl-4 pr-4">
       
       <div className="flex h-14 sm:h-16 justify-between items-center gap-4 p-3 sm:p-4 backdrop-blur bg-white/30 rounded-lg">
         <div className="flex items-center gap-3">
@@ -180,7 +175,7 @@ function Chat({onBack,onRight}) {
             </div>
           )}
 
-          <div className="flex flex-col w-full">
+          <div className=" static h-[74px] mt-2 justify-center flex flex-col w-full">
             <span className="text-xl text-white sm:text-lg font-semibold">
               {userSelected.nickname}
             </span>
@@ -203,18 +198,21 @@ function Chat({onBack,onRight}) {
       </div>
 
      
-      <div className="flex flex-col min-h-screen gap-3 overflow-y-auto flex-1 px-2 py-3 sm:px-4 sm:py-4 scrollbar-thin scrollbar-thumb-gray-400">
+      <div className="flex flex-col flex-1 gap-3 overflow-y-auto px-2 py-3 sm:px-4 sm:py-4 scrollbar-thin scrollbar-thumb-gray-400">
         {loading ? (
           <div className="flex justify-center items-center h-full">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         ) : chatHistory.length === 0 ? (
-          <p className="text-gray-500 text-center mt-4">No messages yet...</p>
+          <p className="h-[calc(100vh-9rem)] text-gray-500 text-center mt-4">No messages yet...</p>
         ) : (
-          chatHistory.map((msg) => (
+          <div className="h-[calc(100vh-9rem)]" >
+            {
+              chatHistory.map((msg) => (
+                 console.log("msg",msg),
             <div
               key={msg._id}
-              className={`flex items-end gap-2 ${
+              className={`flex flex-row items-end gap-4 py-2 ${
                 msg.sender._id === me?._id || msg.sender === me._id
                   ? "justify-end"
                   : "justify-start"
@@ -232,7 +230,7 @@ function Chat({onBack,onRight}) {
                     : "bg-gray-300 text-black rounded-bl-none"
                 }`}
               >
-                {msg.message?.trim() ? (
+                {msg?.message?.trim() ? (
                   <span>{msg.message}</span>
                 ) : msg.mediaKey ? (
                   <img
@@ -244,20 +242,23 @@ function Chat({onBack,onRight}) {
               </div>
             </div>
           ))
-        )}
+            }
+             <div ref={bottomRef} />
+        </div>)}
+        
       </div>
-
+   <div className="">
       <form
-        className="static bottom-12 flex justify-between items-center w-full p-2 sm:h-8 md:h-16 mb-2"
+        className="static flex gap-2 justify-between items-center w-full"
         onSubmit={sendmsg}
       >
-        <div className="flex rounded-full w-full items-center bg-white/10 px-4">
+        <div className="h-[70px] static flex rounded-full w-11/12 items-center z-0 bg-white/10 p-4">
           <input
             type="text"
             value={message}
             onChange={handleChange}
             placeholder="Send a message..."
-            className="bg-transparent outline-none w-full text-sm sm:text-base"
+            className=" bg-transparent outline-none w-full text-white text-md"
           />
           <Media
             me={me}
@@ -277,6 +278,7 @@ function Chat({onBack,onRight}) {
           />
         </button>
       </form>
+    </div>  
     </div>
   );
 }

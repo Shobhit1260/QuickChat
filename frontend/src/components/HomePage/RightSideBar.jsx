@@ -17,8 +17,9 @@ function RightSideBar({onBack}) {
   const isGroup = Array.isArray(userSelected?.members);
 
   return (
-    <div className="p-4 md:w-full min-h-screen border-l border-gray-200 dark:border-gray-700  dark:bg-gray-900 flex flex-col justify-between md:m-4 ">
-             <button
+    <div className="p-4 md:w-full h-full border-l border-gray-200 dark:border-gray-700  dark:bg-gray-900 flex flex-col justify-between  ">
+             <div className="h-1/4">
+              <button
                  onClick={() => {
                     if (window.innerWidth < 640) onBack();
                   }}
@@ -62,9 +63,10 @@ function RightSideBar({onBack}) {
           )}
         </div>
       )}
-
-    
-      {me && (
+             </div>
+      
+      <div className="h-3/4 flex items-center justify-center">
+         {me && (
         <div className="flex flex-col items-center gap-2">
           <h3 className="font-bold text-green-400 text-2xl">
             My Profile
@@ -92,6 +94,9 @@ function RightSideBar({onBack}) {
           </button>
         </div>
       )}
+      </div>
+    
+     
     </div>
   );
 }
