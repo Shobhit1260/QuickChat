@@ -239,7 +239,7 @@ useEffect(() => {
                     alt="media"
                     className="h-40 w-40 sm:h-48 sm:w-48 rounded-lg object-contain"
                   />
-                ) : null}
+                ) : <video src={msg.mediaKey} controls className="h-40 w-40 sm:h-48 sm:w-48 rounded-lg object-contain" />}
               </div>
             </div>
           ))

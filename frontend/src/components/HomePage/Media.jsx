@@ -40,6 +40,7 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
 
       const data = await res.json();
       const url = data.url;
+      const type=data.type;
 
       
       setChats((prev) => [...prev, { url, status: "sending" }]);
@@ -48,28 +49,18 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
       const payload = {
         message: "",
         mediaKey: url,
+        
         fromUserId: me?._id,
       };
       
-      // if (isGroup) {
-      //   console.log("payload",payload);
-      //   socket.emit("sendGroupMessage", {
-      //     ...payload,
-      //     toGroupId: me?._id,
-      //   });
-      // } else {
-      //   
-      // }
+     
       if (isGroup) {
         socket.emit("sendGroupMessage", {
           ...payload,
           toGroupId: userSelected?._id,
 
         });
-        //  socket.emit("sendGroupMessage", {
-        //   ...payload,
-        //   toGroupId: me?._id,
-        // });
+       
       } else {
         socket.emit("sendPrivateMessage", {
           ...payload,

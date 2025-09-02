@@ -55,7 +55,8 @@ try{
    return res.status(200).json({
     message:"Media uploaded successfully to S3",
     s3Key:mediaS3Key,
-    url:publicUrl
+    url:publicUrl,
+    type:mediaFile.type
    })
   
 }
