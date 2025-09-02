@@ -221,7 +221,7 @@ useEffect(() => {
               <img
                 src={msg.sender.picture || me.picture}
                 alt="profile"
-                className="rounded-full w-6 h-6 sm:w-8 sm:h-8"
+                className="rounded-full w-6 h-6 sm:w-8 sm:h-8 "
               />
               <div
                 className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm sm:text-base ${
@@ -236,7 +236,7 @@ useEffect(() => {
                   <img
                     src={msg.mediaKey}
                     alt="media"
-                    className="h-40 w-40 sm:h-48 sm:w-48 rounded-lg object-cover"
+                    className="h-40 w-40 sm:h-48 sm:w-48 rounded-lg object-contain"
                   />
                 ) : null}
               </div>

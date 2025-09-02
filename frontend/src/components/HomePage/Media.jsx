@@ -18,7 +18,7 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
       setPreview(true);
     }
   };
-  console.log("preview",preview);
+  
   const handleSend = async (e) => {
     e.preventDefault();
     if (!file) return;
@@ -50,8 +50,7 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
         mediaKey: url,
         fromUserId: me?._id,
       };
-      console.log("Payload to send:", payload);
-      console.log("FileUrl:", fileURL);
+      
       if (isGroup) {
         socket.emit("sendGroupMessage", {
           ...payload,
@@ -130,10 +129,10 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
 
         <div className="rounded-lg max-h-[60vh] mb-4">
           {file && file.type.startsWith("image/") && (
-            <img src={fileURL} alt="preview" className="w-full h-auto object-contain" />
+            <img src={fileURL} alt="preview" className="w-full h-auto object-fill" />
           )}
           {file && file.type.startsWith("video/") && (
-            <video src={fileURL} controls className="w-full h-auto object-contain" />
+            <video src={fileURL} controls className="w-full h-auto object-fill" />
           )}
           {file && file.type.startsWith("audio/") && (
             <audio src={fileURL} controls className="w-full" />

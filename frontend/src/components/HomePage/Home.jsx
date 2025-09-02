@@ -99,7 +99,7 @@ function Home() {
   return (
     <>
    { isAuthenticated ?
-   <div className="w-full h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+   <div className="w-full h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black ">
 
   
   <div className="w-full h-full sm:flex-row bg-white/10 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl sm:overflow-hidden overflow-y-scroll border border-gray-700 md:hidden ">
@@ -124,7 +124,7 @@ function Home() {
     )}
 
     {activeView === "right" && (
-      <div className="w-full h-full border-l border-gray-700">
+      <div className="w-full h-full border-l border-gray-700 pt-4">
         <RightSideBar onBack={() => setActiveView("chat")} />
       </div>
     )}

@@ -19,7 +19,7 @@ function CreateGroupModal({
   console.log("leftSideBarData in CreateGroupModal:", leftSideBarData);
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div className="my-8 md:my-0 fixed inset-0 bg-black/60 flex items-center justify-center z-50">
       <div className="w-full max-w-2xl h-screen sm:h-auto sm:rounded-xl bg-white text-black shadow-2xl overflow-hidden flex flex-col">
         
         <div className="flex justify-between items-center px-6 py-4 border-b">
