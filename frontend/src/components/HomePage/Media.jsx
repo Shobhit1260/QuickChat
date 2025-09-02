@@ -60,6 +60,11 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
           toGroupId: userSelected?._id,
 
         });
+        socket.emit("sendGroupMessage", {
+          ...payload,
+          toGroupId: me?._id,
+
+        });
        
       } else {
         socket.emit("sendPrivateMessage", {
