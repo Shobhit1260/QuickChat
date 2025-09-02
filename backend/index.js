@@ -19,7 +19,7 @@ const port=process.env.PORT||4000;
 
 
 app.use(cors({
-  origin: "https://quickchat-frontend-rs8b.onrender.com", 
+  origin:process.env.FRONTEND_URL, 
   credentials: true
 }));
 
@@ -32,7 +32,7 @@ app.use('/v1',routes);
 const server =http.createServer(app);
 const io = new Server(server,{
     cors: {
-    origin: "https://quickchat-frontend-rs8b.onrender.com", 
+    origin: process.env.FRONTEND_URL, 
     methods: ["GET", "POST"]
   }
 });
@@ -82,8 +82,6 @@ io.on('connection',(socket)=>{
       sockets?.forEach((sockt)=>{
         io.to(sockt).emit("receivedPrivateMessage",savedMessage);
       }) 
-      
-
       }
       catch(error){
        console.log("error",error);
@@ -91,7 +89,7 @@ io.on('connection',(socket)=>{
     })
    socket.on("sendGroupMessage",async({toGroupId,message,fromUserId,mediaKey})=>{
     try{
-       const savedMessage=await Message.create({
+       let savedMessage=await Message.create({
         sender:fromUserId,
         receiver:toGroupId,
         receiverModel:"Group",
@@ -99,6 +97,10 @@ io.on('connection',(socket)=>{
         mediaKey,
         isRead:false
        })
+       
+       savedMessage = await savedMessage.populate("sender");
+       console.log("savedMessage",savedMessage);
+       console.log("toGroupId",toGroupId);
        io.to(toGroupId).emit("receivedGroupMessage",savedMessage);
       }
       catch(error){

@@ -51,26 +51,33 @@ function Media({ me, userSelected, isGroup, chatHistory }) {
         fromUserId: me?._id,
       };
       
+      // if (isGroup) {
+      //   console.log("payload",payload);
+      //   socket.emit("sendGroupMessage", {
+      //     ...payload,
+      //     toGroupId: me?._id,
+      //   });
+      // } else {
+      //   
+      // }
       if (isGroup) {
         socket.emit("sendGroupMessage", {
           ...payload,
-          toUserId: me?._id,
+          toGroupId: userSelected?._id,
+
         });
-      } else {
-        socket.emit("sendPrivateMessage", {
-          ...payload,
-          toUserId: me?._id,
-        });
-      }
-      if (isGroup) {
-        socket.emit("sendGroupMessage", {
-          ...payload,
-          toUserId: userSelected?._id,
-        });
+        //  socket.emit("sendGroupMessage", {
+        //   ...payload,
+        //   toGroupId: me?._id,
+        // });
       } else {
         socket.emit("sendPrivateMessage", {
           ...payload,
           toUserId: userSelected?._id,
+        });
+        socket.emit("sendPrivateMessage", {
+          ...payload,
+          toUserId: me?._id,
         });
       }
 

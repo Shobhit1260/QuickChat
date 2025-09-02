@@ -31,13 +31,14 @@ function Chat({onBack,onRight}) {
     e.preventDefault();
     if (!message.trim() || !me?._id || !userSelected?._id) return;
     console.log("Sending message:", { message, to: userSelected._id });
-    
+    console.log("isGroup",isGroup);
     if (isGroup) {
+
       socket.emit("sendGroupMessage", {
         toGroupId: userSelected._id,
         message,
-        mediaKey: "",
         fromUserId: me._id,
+        mediaKey: ""
       });
     } else {
       socket.emit("sendPrivateMessage", {
@@ -82,8 +83,9 @@ function Chat({onBack,onRight}) {
     };
 
     fetchHistory();
-
+  
     const handleReceive = (data) => {
+      console.log("data",data);
       setChatHistory((prev) => [...prev, data]);
     };
 
@@ -96,7 +98,7 @@ function Chat({onBack,onRight}) {
       socket.off("receivedPrivateMessage", handleReceive);
       socket.off("receivedGroupMessage", handleReceive);
     };
-  }, [me?._id, userSelected?._id, token, isGroup]);
+  }, [me?._id, userSelected?._id, socket]);
 
   const handleChange = (e) => setMessage(e.target.value);
 
@@ -209,11 +211,10 @@ useEffect(() => {
           <div className="h-[calc(100vh-9rem)]" >
             {
               chatHistory.map((msg) => (
-                 console.log("msg",msg),
             <div
               key={msg._id}
               className={`flex flex-row items-end gap-4 py-2 ${
-                msg.sender._id === me?._id || msg.sender === me._id
+                msg.sender?._id === me?._id || msg.sender === me._id
                   ? "justify-end"
                   : "justify-start"
               }`}
@@ -242,11 +243,13 @@ useEffect(() => {
               </div>
             </div>
           ))
+      
+
             }
              <div ref={bottomRef} />
         </div>)}
-        
       </div>
+
    <div className="">
       <form
         className="static flex gap-2 justify-between items-center w-full"

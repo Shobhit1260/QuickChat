@@ -40,7 +40,6 @@ function Home() {
         });
         const data2 = await res2.json();
         const groups = data2.groups || [];
-         console.log("Fetched groups:", groups);
         setLeftSideBarData({ users, groups });
       } catch (err) {
         console.error("Error fetching sidebar data:", err);
