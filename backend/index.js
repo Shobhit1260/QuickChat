@@ -19,7 +19,7 @@ const port=process.env.PORT||4000;
 
 
 app.use(cors({
-  origin:process.env.FRONTEND_URL, 
+  origin:"https://quickchat-frontend-rs8b.onrender.com", 
   credentials: true
 }));
 
@@ -32,7 +32,7 @@ app.use('/v1',routes);
 const server =http.createServer(app);
 const io = new Server(server,{
     cors: {
-    origin: process.env.FRONTEND_URL, 
+    origin: "https://quickchat-frontend-rs8b.onrender.com", 
     methods: ["GET", "POST"]
   }
 });

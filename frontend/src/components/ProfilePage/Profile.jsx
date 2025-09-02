@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteMe, setMe } from "../../Redux/meSlice";
 import BASE from '../../api.js';
-console.log("API BASE URL:", BASE);
+
 
 function Profile() {
   const { user, isAuthenticated, isLoading, logout, getAccessTokenSilently } = useAuth0();
